@@ -1,5 +1,6 @@
 <template>
   <div>
+    <input type="text" v-model="search" placeholder="Search...">
     <table border="1">
       <thead>
       <tr>
@@ -11,7 +12,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="product in products" :key="product.id">
+      <tr v-for="product in filterMethod" :key="product.id">
         <td>{{ product.id }}</td>
         <td>{{ product.title }}</td>
         <td>{{ product.price }}</td>
@@ -25,7 +26,7 @@
 
 
 <script>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, computed} from 'vue';
 import axios from 'axios';
 
 
@@ -33,21 +34,20 @@ export default {
   name: 'AdminPanel',
   setup() {
     const products = ref([]);
-
+    const search = ref('');
 
     async function fetchProducts() {
       const response = await axios.get('https://dummyjson.com/products');
       products.value = response.data.products;
-      console.log(products.value);
-      console.log(response, response.data);
     }
-
-
     onMounted(fetchProducts);
-
-
+    const filterMethod = computed(()=>{
+      return products.value.filter((product)=>product.title.toLowerCase().includes(search.value.toLowerCase()));
+    })
     return {
-      products
+      products,
+      search,
+      filterMethod
     };
   }
 };
