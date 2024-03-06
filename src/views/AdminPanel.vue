@@ -7,7 +7,7 @@
         <th>Title</th>
         <th>Price</th>
         <th>Description</th>
-        <th>Image</th>
+        <th>Thumbnail</th>
       </tr>
       </thead>
       <tbody>
@@ -40,8 +40,6 @@ export default {
       products.value = response.data.products;
       console.log(products.value);
       console.log(response, response.data);
-
-
     }
 
 
