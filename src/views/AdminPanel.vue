@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <input type="text" v-model="search" placeholder="Search...">
     <table border="1">
       <thead>
