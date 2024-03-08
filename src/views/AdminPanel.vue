@@ -1,35 +1,29 @@
 <template>
-  <div>
-
-    <input type="text" v-model="search" placeholder="Search...">
-    <table border="1">
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Title</th>
-        <th>Price</th>
-        <th>Description</th>
-        <th>Thumbnail</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="product in filterMethod" :key="product.id">
-        <td>{{ product.id }}</td>
-        <td>{{ product.title }}</td>
-        <td>{{ product.price }}</td>
-        <td>{{ product.description }}</td>
-        <td><img :src="product.thumbnail" alt=""></td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+  <v-container>
+    <v-text-field v-model="search" label="Search" outlined></v-text-field>
+    <v-data-table
+        :headers="headers"
+        :items="filterMethod"
+        item-key="id"
+        :search="search"
+    >
+      <template v-slot:item.thumbnail="{ item }">
+        <v-img :src="item.thumbnail" width="100" height="100"></v-img>
+      </template>
+      <template v-slot:thead>
+        <thead>
+        <tr>
+          <th v-for="header in headers" :key="header.text">{{ header.text }}</th>
+        </tr>
+        </thead>
+      </template>
+    </v-data-table>
+  </v-container>
 </template>
 
-
 <script>
-import {ref, onMounted, computed} from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
-
 
 export default {
   name: 'AdminPanel',
@@ -41,11 +35,25 @@ export default {
       const response = await axios.get('https://dummyjson.com/products');
       products.value = response.data.products;
     }
+
     onMounted(fetchProducts);
-    const filterMethod = computed(()=>{
-      return products.value.filter((product)=>product.title.toLowerCase().includes(search.value.toLowerCase()));
-    })
+
+    const headers = [
+      { text: 'ID', value: 'id' },
+      { text: 'Title', value: 'title' },
+      { text: 'Price', value: 'price' },
+      { text: 'Description', value: 'description' },
+      { text: 'Thumbnail', value: 'thumbnail' }
+    ];
+
+    const filterMethod = computed(() =>
+        products.value.filter((product) =>
+            product.title.toLowerCase().includes(search.value.toLowerCase())
+        )
+    );
+
     return {
+      headers,
       products,
       search,
       filterMethod
